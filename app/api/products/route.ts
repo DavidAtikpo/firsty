@@ -2,8 +2,16 @@ import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getSession } from "@/lib/session"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
   try {
+    // During build time, return empty response to avoid build errors
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ products: [] })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const activeOnly = searchParams.get("active") === "true"
     const category = searchParams.get("category")
@@ -27,12 +35,24 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ products })
   } catch (error) {
+    console.error("Error in GET /api/products:", error)
+    
+    // During build, return empty response instead of error
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ products: [] })
+    }
+
     return NextResponse.json({ error: "Erreur lors de la récupération des produits" }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    // During build time, return empty response to avoid build errors
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ product: null })
+    }
+
     const session = await getSession()
 
     if (!session || session.role !== "ADMIN") {
@@ -58,6 +78,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ product })
   } catch (error) {
+    console.error("Error in POST /api/products:", error)
+    
+    // During build, return empty response instead of error
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ product: null })
+    }
+
     return NextResponse.json({ error: "Erreur lors de la création du produit" }, { status: 500 })
   }
 }

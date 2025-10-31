@@ -1,8 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getMerchantByAffiliateCode } from "@/lib/affiliate"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
   try {
+    // During build time, return empty response to avoid build errors
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ success: false })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const code = searchParams.get("code")
 
@@ -29,6 +37,13 @@ export async function GET(request: NextRequest) {
 
     return response
   } catch (error) {
+    console.error("Error in GET /api/affiliate/track:", error)
+    
+    // During build, return empty response instead of error
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ success: false })
+    }
+
     return NextResponse.json({ error: "Erreur lors du tracking" }, { status: 500 })
   }
 }
