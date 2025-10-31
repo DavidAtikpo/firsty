@@ -17,16 +17,26 @@ export async function createSession(user: AuthUser) {
 }
 
 export async function getSession(): Promise<AuthUser | null> {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)
-
-  if (!sessionCookie) {
-    return null
-  }
-
   try {
-    return JSON.parse(sessionCookie.value) as AuthUser
-  } catch {
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)
+
+    if (!sessionCookie) {
+      return null
+    }
+
+    try {
+      return JSON.parse(sessionCookie.value) as AuthUser
+    } catch {
+      return null
+    }
+  } catch (error) {
+    // During build time, cookies() may not be available
+    // Return null silently to allow build to continue
+    if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE === "phase-production-build") {
+      return null
+    }
+    console.warn("Error getting session:", error)
     return null
   }
 }

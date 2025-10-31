@@ -2,8 +2,16 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getSession } from "@/lib/session"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET() {
   try {
+    // During build time, return empty response to avoid build errors
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ stats: null })
+    }
+
     const session = await getSession()
 
     if (!session || session.role !== "MERCHANT") {
@@ -44,6 +52,13 @@ export async function GET() {
 
     return NextResponse.json({ stats })
   } catch (error) {
+    console.error("Error in GET /api/merchants/stats:", error)
+    
+    // During build, return empty response instead of error
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json({ stats: null })
+    }
+
     return NextResponse.json({ error: "Erreur lors de la récupération des statistiques" }, { status: 500 })
   }
 }
