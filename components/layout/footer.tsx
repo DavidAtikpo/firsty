@@ -154,7 +154,7 @@ export function Footer() {
             </p>
             <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-muted-foreground">
               <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="whitespace-nowrap">Support: +33 1 23 45 67 89</span>
+              <span className="whitespace-nowrap">Support:+228 92 59 12 28</span>
             </div>
           </div>
         </div>

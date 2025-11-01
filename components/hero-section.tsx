@@ -87,15 +87,15 @@ export function HeroSection() {
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-medium mb-2">
               <Star className="h-2.5 w-2.5 fill-current" />
-              <span className="text-xs">Qualité Premium</span>
+              <span className="text-xs">Boissons Naturelles</span>
             </div>
             
             <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
-              Découvrez nos produits d'exception
+              Vos boissons pour chaque moment
             </h1>
             
             <p className="text-xs md:text-base text-gray-600 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              Une sélection unique de produits haut de gamme pour transformer votre quotidien.
+              Découvrez nos boissons naturelles à base de fruits d'ananas, idéales pour vos fêtes, mariages et cérémonies. Rejoignez notre programme d'affiliation et gagnez des commissions en partageant nos produits.
             </p>
       
           </div>
