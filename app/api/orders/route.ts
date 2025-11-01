@@ -135,6 +135,35 @@ export async function POST(request: NextRequest) {
     // Calculer la commission si un commerçant est associé
     if (merchantId) {
       await calculateCommission(order.id)
+      
+      // Marquer le dernier clic comme converti (généré une commande)
+      // On prend le clic le plus récent de ce commerçant (dans les 30 derniers jours)
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      
+      // Trouver le clic le plus récent non converti
+      const latestClick = await prisma.affiliateClick.findFirst({
+        where: {
+          merchantId,
+          converted: false,
+          createdAt: {
+            gte: thirtyDaysAgo,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+      
+      // Mettre à jour ce clic si trouvé
+      if (latestClick) {
+        await prisma.affiliateClick.update({
+          where: { id: latestClick.id },
+          data: {
+            converted: true,
+          },
+        })
+      }
     }
 
     return NextResponse.json({ order })

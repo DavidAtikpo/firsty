@@ -55,7 +55,8 @@ model Merchant {
   
   // Relations
   referrals       Order[]
-  commissions     Commission[]
+  commissions      Commission[]
+  clicks          AffiliateClick[]
   
   @@index([affiliateCode])
 }
@@ -143,4 +144,22 @@ model Commission {
   
   @@index([merchantId])
   @@index([isPaid])
+}
+
+model AffiliateClick {
+  id            String    @id @default(cuid())
+  
+  merchantId   String
+  merchant      Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  
+  ipAddress     String?
+  userAgent     String?   @db.Text
+  referer       String?   @db.Text
+  converted     Boolean   @default(false) // True si le clic a généré une commande
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([merchantId])
+  @@index([createdAt])
+  @@index([converted])
 }

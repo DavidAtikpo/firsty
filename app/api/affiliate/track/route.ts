@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getMerchantByAffiliateCode } from "@/lib/affiliate"
+import { prisma } from "@/lib/prisma"
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -23,6 +24,24 @@ export async function GET(request: NextRequest) {
     if (!merchant) {
       return NextResponse.json({ error: "Code d'affiliation invalide" }, { status: 404 })
     }
+
+    // Enregistrer le clic
+    const ipAddress = request.headers.get("x-forwarded-for") || 
+                      request.headers.get("x-real-ip") || 
+                      request.ip || 
+                      "unknown"
+    const userAgent = request.headers.get("user-agent") || "unknown"
+    const referer = request.headers.get("referer") || request.headers.get("referrer") || null
+
+    await prisma.affiliateClick.create({
+      data: {
+        merchantId: merchant.id,
+        ipAddress,
+        userAgent,
+        referer,
+        converted: false, // Sera mis à true si une commande est créée
+      },
+    })
 
     // Créer une réponse avec le cookie d'affiliation
     const response = NextResponse.json({ success: true, merchant: { name: merchant.user.name } })

@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,10 +11,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [redirectPath, setRedirectPath] = useState<string | null>(null)
+
+  useEffect(() => {
+    const redirect = searchParams.get("redirect")
+    if (redirect) {
+      setRedirectPath(redirect)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,8 +44,10 @@ export function LoginForm() {
         return
       }
 
-      // Rediriger selon le rôle
-      if (data.user.role === "ADMIN") {
+      // Rediriger selon le paramètre redirect ou le rôle
+      if (redirectPath) {
+        router.push(redirectPath)
+      } else if (data.user.role === "ADMIN") {
         router.push("/admin")
       } else if (data.user.role === "MERCHANT") {
         router.push("/merchant")

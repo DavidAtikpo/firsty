@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { ProductsManagement } from "./products-management"
 import { OrdersManagement } from "./orders-management"
 import { MerchantsManagement } from "./merchants-management"
+import { CommissionsManagement } from "./commissions-management"
 
 export function AdminDashboard() {
   const router = useRouter()
@@ -31,10 +32,11 @@ export function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
             <TabsTrigger value="products">Produits</TabsTrigger>
             <TabsTrigger value="orders">Commandes</TabsTrigger>
             <TabsTrigger value="merchants">Commerçants</TabsTrigger>
+            <TabsTrigger value="commissions">Commissions</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products" className="mt-6">
@@ -47,6 +49,10 @@ export function AdminDashboard() {
 
           <TabsContent value="merchants" className="mt-6">
             <MerchantsManagement />
+          </TabsContent>
+
+          <TabsContent value="commissions" className="mt-6">
+            <CommissionsManagement />
           </TabsContent>
         </Tabs>
       </main>

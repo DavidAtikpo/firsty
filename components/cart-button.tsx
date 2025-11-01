@@ -2,13 +2,22 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Car } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Car, Plus, Minus, Trash2, ShoppingBag } from "lucide-react"
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { useCart } from "@/hooks/use-cart"
 import Link from "next/link"
+import Image from "next/image"
+import { getValidImageUrl } from "@/lib/image-validation"
 
 export function CartButton() {
-  const { cart, totalItems } = useCart()
+  const { cart, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+    }).format(amount)
+  }
 
   return (
     <Sheet>
@@ -22,42 +31,147 @@ export function CartButton() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent>
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Panier</h2>
-          {cart.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <p>Votre panier est vide</p>
-              <Link href="/shop">
-                <Button className="mt-4">Continuer les achats</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                {cart.map((item) => (
-                  <div key={item.product.id} className="flex items-center gap-4 border-b pb-4">
-                    <div className="w-16 h-16 bg-muted rounded" />
-                    <div className="flex-1">
-                      <p className="font-medium">{item.product.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {item.quantity} x {item.product.price.toFixed(2)}€
-                      </p>
+      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5" />
+            Panier ({totalItems} {totalItems > 1 ? "articles" : "article"})
+          </SheetTitle>
+          <SheetDescription>
+            {cart.length === 0
+              ? "Votre panier est vide"
+              : `${cart.length} ${cart.length > 1 ? "produits" : "produit"} dans votre panier`}
+          </SheetDescription>
+        </SheetHeader>
+
+        {cart.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center py-12 text-center">
+            <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+            <p className="text-lg font-medium mb-2">Votre panier est vide</p>
+            <p className="text-sm text-muted-foreground mb-6">Commencez vos achats pour remplir votre panier</p>
+            <Link href="/shop">
+              <Button className="w-full sm:w-auto">Continuer les achats</Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="flex-1 overflow-y-auto space-y-3 py-4">
+              {cart.map((item) => {
+                const productImage = item.product.image
+                  ? getValidImageUrl(item.product.image)
+                  : "/placeholder.svg"
+
+                return (
+                  <div
+                    key={item.product.id}
+                    className="flex gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    {/* Image du produit */}
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                      {productImage && productImage.startsWith("data:image") ? (
+                        <img
+                          src={productImage}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            if (target.src !== "/placeholder.svg") {
+                              target.src = "/placeholder.svg"
+                            }
+                          }}
+                        />
+                      ) : (
+                        <Image
+                          src={productImage}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 80px, 96px"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            if (target.src !== "/placeholder.svg") {
+                              target.src = "/placeholder.svg"
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    {/* Informations du produit */}
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base line-clamp-2">{item.product.name}</h4>
+                          <p className="text-sm font-semibold text-primary mt-1">
+                            {formatCurrency(item.product.price)}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 flex-shrink-0"
+                          onClick={() => removeFromCart(item.product.id)}
+                          aria-label="Supprimer"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+
+                      {/* Contrôle de quantité */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center border rounded-md">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-r-none"
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                            aria-label="Diminuer la quantité"
+                          >
+                            <Minus className="h-3.5 w-3.5" />
+                          </Button>
+                          <span className="px-3 py-1 min-w-[2.5rem] text-center text-sm font-medium">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-l-none"
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            aria-label="Augmenter la quantité"
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                        <p className="text-sm font-semibold ml-auto">
+                          {formatCurrency(item.product.price * item.quantity)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                ))}
+                )
+              })}
+            </div>
+
+            {/* Résumé et actions */}
+            <div className="border-t pt-4 space-y-4 mt-auto">
+              <div className="flex items-center justify-between text-lg">
+                <span className="font-medium">Total</span>
+                <span className="font-bold text-primary">{formatCurrency(totalPrice)}</span>
               </div>
-              <div className="border-t pt-4">
-                <p className="text-lg font-semibold">
-                  Total: {cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0).toFixed(2)}€
-                </p>
-                <Link href="/shop">
-                  <Button className="w-full mt-4">Voir le panier</Button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link href="/shop" className="flex-1">
+                  <Button variant="outline" className="w-full">
+                    Continuer les achats
+                  </Button>
+                </Link>
+                <Link href="/checkout" className="flex-1">
+                  <Button className="w-full">Commander</Button>
                 </Link>
               </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   )

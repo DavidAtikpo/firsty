@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/hooks/use-toast"
+import { useCart } from "@/hooks/use-cart"
+import type { Product as CartProduct } from "@/hooks/use-cart"
+import { getValidImageUrl } from "@/lib/image-validation"
 
 interface ProductCardProps {
   product: {
@@ -29,8 +32,16 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onAddToCart, showActions = true }: ProductCardProps) {
+  const { addToCart: addToCartContext } = useCart()
   const [liked, setLiked] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [productUrl, setProductUrl] = useState("")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setProductUrl(`${window.location.origin}/shop?product=${product.id}`)
+    }
+  }, [product.id])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("fr-FR", {
@@ -39,7 +50,6 @@ export function ProductCard({ product, onAddToCart, showActions = true }: Produc
     }).format(price)
   }
 
-  const productUrl = typeof window !== "undefined" ? `${window.location.origin}/shop?product=${product.id}` : ""
   const productText = `Découvrez ${product.name} sur Firsty Shop!`
 
   const handleShare = (platform: string) => {
@@ -80,11 +90,35 @@ export function ProductCard({ product, onAddToCart, showActions = true }: Produc
   return (
     <Card className="overflow-hidden flex flex-col h-full p-0 gap-0">
       <div className="relative aspect-[3/4] sm:aspect-square bg-muted group m-0">
-        {product.image ? (
-          <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
+        {product.image && product.image.startsWith("data:image") ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              if (target.src !== "/placeholder.svg") {
+                target.src = "/placeholder.svg"
+              }
+            }}
+          />
+        ) : product.image ? (
+          <Image
+            src={getValidImageUrl(product.image)}
+            alt={product.name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              if (target.src !== "/placeholder.svg") {
+                target.src = "/placeholder.svg"
+              }
+            }}
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-muted-foreground">Pas d'image</span>
+            <Image src="/placeholder.svg" alt={product.name} fill className="object-cover opacity-50" />
           </div>
         )}
         {!product.isActive && (
@@ -160,7 +194,32 @@ export function ProductCard({ product, onAddToCart, showActions = true }: Produc
         <CardFooter className="p-1.5 sm:p-4 pt-1 sm:pt-0">
           <Button
             className="w-full text-xs sm:text-base h-8 sm:h-10"
-            onClick={() => onAddToCart?.(product.id)}
+            onClick={() => {
+              if (onAddToCart) {
+                // Si un callback est fourni, l'utiliser (compatibilité)
+                onAddToCart(product.id)
+              } else {
+                // Sinon, utiliser le contexte du panier directement
+                const cartProduct: CartProduct = {
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image, // Peut être null, c'est OK
+                  inStock: product.stock > 0,
+                  rating: 4.5,
+                  reviews: 0,
+                  description: product.description,
+                  category: undefined,
+                  stock: product.stock,
+                  isActive: product.isActive,
+                }
+                addToCartContext(cartProduct)
+                toast({
+                  title: "Produit ajouté",
+                  description: `${product.name} a été ajouté au panier`,
+                })
+              }
+            }}
             disabled={product.stock === 0 || !product.isActive}
             size="sm"
           >
