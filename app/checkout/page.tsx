@@ -15,6 +15,7 @@ import { ShoppingBag, ArrowLeft, Loader2, CheckCircle2, AlertCircle } from "luci
 import Image from "next/image"
 import { getValidImageUrl } from "@/lib/image-validation"
 import { toast } from "@/hooks/use-toast"
+import { formatCurrency } from "@/lib/currency"
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -65,12 +66,7 @@ export default function CheckoutPage() {
     }
   }, [cart, submitting, success, router])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

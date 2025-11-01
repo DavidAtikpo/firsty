@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Euro, ShoppingCart, TrendingUp, Percent, Users, Calendar, TrendingDown, MousePointerClick, Target } from "lucide-react"
+import { formatCurrency } from "@/lib/currency"
 
 interface MerchantStatsProps {
   totalEarnings: number
@@ -42,12 +43,7 @@ export function MerchantStats({
   recentConvertedClicks = 0,
   recentConversionRate = 0,
 }: MerchantStatsProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const primaryStats = [
     {

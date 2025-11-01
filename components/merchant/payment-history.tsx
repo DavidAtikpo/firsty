@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { formatCurrency } from "@/lib/currency"
 
 interface Payment {
   id: string
@@ -42,12 +43,7 @@ export function PaymentHistory() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("fr-FR", {

@@ -10,6 +10,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { translateProductName } from "@/lib/product-translations"
 import { getValidImageUrl } from "@/lib/image-validation"
+import { formatCurrency } from "@/lib/currency"
 
 interface ProductCardProps {
   product: Product
@@ -92,7 +93,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] md:text-base font-bold text-primary">€{product.price.toFixed(2)}</span>
+          <span className="text-[11px] md:text-base font-bold text-primary">{formatCurrency(product.price)}</span>
           <Badge variant={(product.inStock ?? (product.stock !== undefined ? product.stock > 0 : true)) ? "default" : "secondary"} className="text-[8px] md:text-xs py-0 px-1 md:py-1 md:px-2">
             {(product.inStock ?? (product.stock !== undefined ? product.stock > 0 : true)) ? t("inStockShort") : t("outOfStockShort")}
           </Badge>

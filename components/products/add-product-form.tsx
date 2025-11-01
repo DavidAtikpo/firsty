@@ -86,7 +86,7 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="price">Prix (€)</Label>
+              <Label htmlFor="price">Prix (FCFA)</Label>
               <Input
                 id="price"
                 type="number"

@@ -57,8 +57,8 @@ export async function GET() {
       id: commission.id,
       type: commission.isPaid ? "paid" : "new_commission",
       message: commission.isPaid
-        ? `Commission de ${commission.amount.toFixed(2)}€ payée pour la commande ${commission.order.orderNumber}`
-        : `Nouvelle commission de ${commission.amount.toFixed(2)}€ pour la commande ${commission.order.orderNumber}`,
+        ? `Commission de ${commission.amount.toFixed(0)} FCFA payée pour la commande ${commission.order.orderNumber}`
+        : `Nouvelle commission de ${commission.amount.toFixed(0)} FCFA pour la commande ${commission.order.orderNumber}`,
       amount: commission.amount,
       orderNumber: commission.order.orderNumber,
       createdAt: commission.createdAt,

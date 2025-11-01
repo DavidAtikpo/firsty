@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
+import { formatCurrency } from "@/lib/currency"
 
 interface Product {
   id: string
@@ -16,12 +17,7 @@ interface ProductsCarouselProps {
 }
 
 export function ProductsCarousel({ products }: ProductsCarouselProps) {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   if (products.length === 0) return null
 
@@ -55,7 +51,7 @@ export function ProductsCarousel({ products }: ProductsCarouselProps) {
               </div>
               <div className="p-2 sm:p-3">
                 <h4 className="text-xs sm:text-sm font-medium line-clamp-1 mb-1">{product.name}</h4>
-                <p className="text-xs sm:text-sm font-bold text-primary">{formatPrice(product.price)}</p>
+                <p className="text-xs sm:text-sm font-bold text-primary">{formatCurrency(product.price)}</p>
               </div>
             </Card>
           </Link>

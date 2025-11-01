@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { formatCurrency } from "@/lib/currency"
 
 interface Order {
   id: string
@@ -45,12 +46,7 @@ export function OrdersList() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("fr-FR", {

@@ -33,14 +33,7 @@ export function RevenueChart() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 0)
 

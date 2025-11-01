@@ -5,6 +5,7 @@ import { ArrowRight, Star, Shield, Truck, Zap, ChevronLeft, ChevronRight } from 
 import Image from "next/image"
 import Link from "next/link"
 import { getValidImageUrl } from "@/lib/image-validation"
+import { formatCurrency } from "@/lib/currency"
 // import { translateProductName } from "@/lib/product-translations"
 // import { useLanguage } from "@/hooks/use-language"
 
@@ -156,7 +157,7 @@ export function HeroSection() {
                     </div>
                     <span className="text-[8px] md:text-xs text-gray-500">({currentProduct.reviews})</span>
                   </div>
-                  <p className="text-xs md:text-sm font-bold text-blue-600">€{currentProduct.price.toFixed(2)}</p>
+                  <p className="text-xs md:text-sm font-bold text-blue-600">{formatCurrency(currentProduct.price)}</p>
                 </div>
                 
                 {/* Navigation buttons */}

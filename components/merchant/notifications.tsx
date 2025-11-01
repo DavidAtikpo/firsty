@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bell, Euro, CheckCircle, Clock } from "lucide-react"
+import { formatCurrency } from "@/lib/currency"
 
 interface Notification {
   id: string
@@ -41,12 +42,7 @@ export function Notifications() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const formatDate = (date: string) => {
     const now = new Date()

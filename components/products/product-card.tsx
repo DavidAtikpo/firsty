@@ -16,6 +16,7 @@ import { toast } from "@/hooks/use-toast"
 import { useCart } from "@/hooks/use-cart"
 import type { Product as CartProduct } from "@/hooks/use-cart"
 import { getValidImageUrl } from "@/lib/image-validation"
+import { formatCurrency } from "@/lib/currency"
 
 interface ProductCardProps {
   product: {
@@ -43,12 +44,7 @@ export function ProductCard({ product, onAddToCart, showActions = true }: Produc
     }
   }, [product.id])
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const productText = `Découvrez ${product.name} sur Firsty Shop!`
 
@@ -186,7 +182,7 @@ export function ProductCard({ product, onAddToCart, showActions = true }: Produc
         <h3 className="font-semibold text-sm sm:text-lg mb-0 sm:mb-2 line-clamp-1">{product.name}</h3>
         <p className="hidden sm:block text-sm text-muted-foreground line-clamp-2 mb-2 sm:mb-3">{product.description}</p>
         <div className="flex items-center justify-between gap-1 mt-0.5 sm:mt-0">
-          <span className="text-base sm:text-2xl font-bold">{formatPrice(product.price)}</span>
+          <span className="text-base sm:text-2xl font-bold">{formatCurrency(product.price)}</span>
           <span className="hidden sm:inline text-xs sm:text-sm text-muted-foreground">Stock: {product.stock}</span>
         </div>
       </CardContent>

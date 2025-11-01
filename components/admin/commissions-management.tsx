@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Check, X, Euro, TrendingUp } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+import { formatCurrency } from "@/lib/currency"
 
 interface Commission {
   id: string
@@ -100,12 +101,7 @@ export function CommissionsManagement() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("fr-FR", {

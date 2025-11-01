@@ -8,16 +8,10 @@ import { useCart } from "@/hooks/use-cart"
 import Link from "next/link"
 import Image from "next/image"
 import { getValidImageUrl } from "@/lib/image-validation"
+import { formatCurrency } from "@/lib/currency"
 
 export function CartButton() {
   const { cart, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
 
   return (
     <Sheet>

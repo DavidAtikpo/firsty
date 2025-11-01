@@ -38,12 +38,7 @@ export function ShoppingCart({ cart, updateQuantity, clearCart, onClose }: Shopp
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 

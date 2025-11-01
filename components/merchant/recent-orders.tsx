@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/lib/currency"
 
 interface Order {
   id: string
@@ -15,12 +16,7 @@ interface RecentOrdersProps {
 }
 
 export function RecentOrders({ orders }: RecentOrdersProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount)
-  }
+  // Utiliser la fonction utilitaire formatCurrency
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("fr-FR", {
